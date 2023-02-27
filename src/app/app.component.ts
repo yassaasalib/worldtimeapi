@@ -1,44 +1,25 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, switchMap, timer } from 'rxjs';
+import { UserService } from './app.service'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  apiResult: any;
+export class AppComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
+  // statusText: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private myService: UserService){}
 
-  ngOnInit() {
-    this.callApi();
+  ngOnInit(): void {
+    this.subscription = timer(0, 4000).pipe(
+      switchMap(() => this.myService.getData())
+    ).subscribe(result => console.log(result));
   }
 
-  callApi() {
-    setInterval(() => {
-      this.getData().subscribe(
-        (result) => {
-          this.apiResult = result;
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }, 4000);
-  }
-
-  getData(): Observable<any> {
-    return this.http.get('http://worldtimeapi.org/api/timezone/Africa/Abidjan').pipe(
-      switchMap((result) => {
-        return of(result);
-      }),
-      catchError((error: any) => {
-        console.error(error);
-        return of(null);
-      })
-    );
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

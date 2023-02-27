@@ -9,14 +9,14 @@ import { UserService } from './app.service'
 })
 export class AppComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
-  // statusText: any;
+  data: any;
 
   constructor(private myService: UserService){}
 
   ngOnInit(): void {
     this.subscription = timer(0, 4000).pipe(
       switchMap(() => this.myService.getData())
-    ).subscribe(result => console.log(result));
+    ).subscribe(result => this.data = result);
   }
 
   ngOnDestroy(): void {

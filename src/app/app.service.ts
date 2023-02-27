@@ -5,9 +5,6 @@ import { Observable } from "rxjs";
     providedIn: 'root', 
 })
 export class UserService {
-    // checkdata() {
-    //   throw new Error('Method not implemented.');
-    // }
     constructor(private http: HttpClient){}
 
     getData() {
